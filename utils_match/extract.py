@@ -5,7 +5,7 @@ import warnings
 import argparse
 import numpy as np
 
-sys.path.append("/scratch/tyoeasley/brain_representations/src_py")
+sys.path.append("/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py")
 from generate_subindex import tag_to_subidx
 
 
@@ -47,7 +47,7 @@ def _write_out(var, varlabel, phom_fpath):
 def xtr_bars_reps(out, do_hom0 = False, debug = True, maxdim=2) :
     '''This function converts the output of compute_bars_tight_reps into list of bars and reps, organised by dimension'''
 
-    PH_nameline = _get_PH_nameline(out, maxdim=maxdim)
+    PH_nameline, maxdim = _get_PH_nameline(out, maxdim=maxdim)
 
     bars = _init_dimdict(maxdim)
     reps = _init_dimdict(maxdim)
@@ -110,7 +110,7 @@ def xtr_bars_reps(out, do_hom0 = False, debug = True, maxdim=2) :
 def xtr_bars_reps_indices(out, do_hom0 = False, debug = False, maxdim=2):
     '''This function converts the output of compute_bars_tight_reps into list of bars, representatives and indices of the persistence pairs,
     organised by dimension. REMARK: you need to use the modified version or ripser_tight_representative_cycles'''
-    PH_nameline = _get_PH_nameline(out, maxdim=maxdim)
+    PH_nameline, maxdim = _get_PH_nameline(out, maxdim=maxdim)
 
     bars = _init_dimdict(maxdim)
     reps = _init_dimdict(maxdim)
@@ -130,7 +130,7 @@ def xtr_bars_reps_indices(out, do_hom0 = False, debug = False, maxdim=2):
             ### debug code ###
             print('')
             print('In: xtr_bars_reps_indices')
-            print(f'current line-read number={i}, dim={dim}, \noutline={out[i]}')
+            print(f'current line-read number={i}, dim={dim}, \noutline = {out[i]}')
             print(f"PH_nameline dictionary: \n{PH_nameline}")
             # print('Output for homology dimension ' + str(dim) + ':')
             # print(*out[i:PH_nameline[dim+1]], sep='\n')
@@ -152,11 +152,16 @@ def xtr_bars_reps_indices(out, do_hom0 = False, debug = False, maxdim=2):
             ### debug code ###
             print('')
             print(f'In: xtr_bars_reps_indices')
-            print(f'current line-read number={i}, dim={dim}')
+            print(f'current line-read number={i}, dim={dim}, \noutline = {out[i]}')
             print(f"PH_nameline dictionary: \n{PH_nameline}")
             ### debug code ###
 
         while i < PH_nameline[dim + 1] :
+            if debug:
+                ### debug code ###
+                print(f"scanning line {i} = {out[i]}:")
+                ### debug code ###
+
             if i == len(out) - 1 : # trivial string ''
                 break
             bar,_ = _get_bar(out[i],i)
@@ -167,8 +172,16 @@ def xtr_bars_reps_indices(out, do_hom0 = False, debug = False, maxdim=2):
             indices[dim] += [ _get_idx(out[i]) ]
 
             i += 1 # next line for tight reps
+            if debug:
+                ### debug code ###
+                print(f"scanning line {i} = {out[i]}:")
+                ### debug code ###
             tight_reps[dim] += [ _get_genreps(out[i]) ]
             i += 1 # again, next line for reps
+            if debug:
+                ### debug code ###
+                print(f"scanning line {i} = {out[i]}:")
+                ### debug code ###
             reps[dim] += [ _get_genreps(out[i]) ]
             i += 1
 
@@ -183,7 +196,7 @@ def xtr_bars_reps_indices(out, do_hom0 = False, debug = False, maxdim=2):
 def xtr_bars(out, do_hom0 = False, debug = False, maxdim=2) :
     ''' This function converts the output of compute_image_bars into list of bars organised by dimension
     (simpler version than xtr_bars_reps, no reps for image-persistence)'''
-    PH_nameline = _get_PH_nameline(out, maxdim=maxdim)
+    PH_nameline, maxdim = _get_PH_nameline(out, maxdim=maxdim)
 
     bars = _init_dimdict(maxdim)
 
@@ -225,7 +238,7 @@ def xtr_bars(out, do_hom0 = False, debug = False, maxdim=2) :
 def xtr_bars_indices(out, do_hom0 = False, debug = False, maxdim=2) :
     ''' This function converts the output of compute_image_bars into list of bars and indices of the persistence pairs organised by dimension
     (simpler version than xtr_bars_reps_indices, no reps for image-persistence). REMARK: need to use the modified version of ripser-image!'''
-    PH_nameline = _get_PH_nameline(out, maxdim=maxdim)
+    PH_nameline, maxdim = _get_PH_nameline(out, maxdim=maxdim)
 
     bars = _init_dimdict(maxdim)
     indices = _init_dimdict(maxdim)
@@ -273,19 +286,27 @@ def xtr_bars_indices(out, do_hom0 = False, debug = False, maxdim=2) :
 def _get_PH_nameline(out, maxdim=2, debug=True):
     # find after which line it starts enumerating intervals in dim 0,1,2
     PH_nameline = {dim: len(out) for dim in range(maxdim+2)}
-    dim_prologue1 = 'persistent homology intervals in dim '
-    dim_prologue2 = 'persistence intervals in dim '
-    for i,line in enumerate(out) :
-        if line.startswith(dim_prologue1) or line.startswith(dim_prologue2):
-            dim = int(line.split(':')[0][-1])
-            PH_nameline[dim] = i
-            if debug:
-                ### debugging code ###
-                print(f"Found naming line for dimension {dim} at line {i}: \"{line}\"")
-                print(f"Updated PH_nameline dictionary: {PH_nameline}")
-                ### debugging code ###
+    dim_prologue = 'persistent homology intervals in dim '
+    namelines = [line for line in out if line.startswith(dim_prologue)]
+    dims = []
+    for line in namelines:
+        dim = int(line.split(':')[0][-1])
+        i = out.index(line)
+        PH_nameline[dim] = i
+        dims.append(dim)
+        if debug:
+            ### debugging code ###
+            print(f"Found naming line for dimension {dim} at line {i}: \"{line}\"")
+            print(f"Updated PH_nameline dictionary: {PH_nameline}")
+            ### debugging code ###
+    maxdim = max(dims) + 1
+    if debug:
+        ### debugging code ###
+        print(f"Found nonempty barcodes of up to dimension {max(dims)} in barcode; setting \'maxdim\' parameter to {maxdim}.")
+        ### debugging code ###
 
-    return PH_nameline
+
+    return PH_nameline, maxdim
 
 def _init_dimdict(maxdim):
     dimdict = {dim: [] for dim in range(maxdim+1)}
@@ -339,6 +360,7 @@ def _get_h0rep(line_out, inf_flag, lineno=None, debug=True):
             print(f"output line number: {lineno}")
             print(f"output line: {line_out}\n")
         ### debugging code ###
+        return []
 
     if inf_flag:
         h0rep = [ [int(y.group(1))] ]
@@ -361,7 +383,7 @@ def _get_idx(line_out):
     if not z : 
         z = re.search(r"indices: \d*-\d*", line_out)
         if not z :
-            raise ValueError("no indices found --- are you using the modified version of ripser-tight-representative-cycles?")
+            raise ValueError(f"line out: {line_out}\nno indices found --- are you using the modified version of ripser-tight-representative-cycles?")
     idx = [int(z.group(1)), int(z.group(2))]
     return idx
 

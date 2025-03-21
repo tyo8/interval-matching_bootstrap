@@ -2,8 +2,8 @@ from numpy import allclose
 from send_cmd import send_cmd_linux as send
 
 #### paths to Ripser
-ripser_rep_path = '/scratch/tyoeasley/brain_representations/src_py/interval-matching-precomp_metric/modified_ripser/ripser-tight-representative-cycles/ripser-representatives'
-ripser_img_path = '/scratch/tyoeasley/brain_representations/src_py/interval-matching-precomp_metric/modified_ripser/ripser-image-persistence-simple/ripser-image'
+ripser_rep_path = '/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py/interval-matching-precomp_metric/modified_ripser/ripser-tight-representative-cycles/ripser-representatives'
+ripser_img_path = '/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py/interval-matching-precomp_metric/modified_ripser/ripser-image-persistence-simple/ripser-image'
 
 
 

@@ -4,7 +4,7 @@ import ast
 import argparse
 import numpy as np
 
-default_tagfile = "/scratch/tyoeasley/brain_representations/subsampling/taglist100k_90p_famstruct.txt"
+default_tagfile = "/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/subsampling/taglist100k_90p_famstruct.txt"
 
 # Assumes data to be aggregated has simple list structure; concatenates across all files
 def collate_simplist_data(filelist):
@@ -105,7 +105,7 @@ def _strip_dim(filename):
     dim = filename.split('_dim')[1][0]
     return dim
 
-default_scripter="/scratch/tyoeasley/brain_representations/src_bash/submit_match_sbatch.sh"
+default_scripter="/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_bash/submit_match_sbatch.sh"
 def _redo_match(phomY_fpath, dim, scripter=default_scripter):
     print(f"Resubmitting cycle-matching corresponding to {phomY_fpath}")
     print("...")

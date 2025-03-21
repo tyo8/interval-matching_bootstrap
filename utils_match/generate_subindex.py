@@ -5,7 +5,7 @@ import sys
 import numpy as np
 
 rng = np.random.default_rng()
-def_motherID_fpath="/scratch/tyoeasley/brain_representations/subsampling/RESTRICTED_mother_IDs_eid_order.txt"
+def_motherID_fpath="/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/subsampling/RESTRICTED_mother_IDs_eid_order.txt"
 
 
 ################################################################################################################

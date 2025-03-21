@@ -3,7 +3,7 @@ import sys
 import argparse
 import numpy as np
 
-sys.path.append('/scratch/tyoeasley/brain_representations/src_py')
+sys.path.append('/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py')
 from generate_subindex import tag_to_subidx
 
 ## main function and helpers ##
