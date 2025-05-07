@@ -5,8 +5,8 @@ import warnings
 import argparse
 import numpy as np
 
-sys.path.append("/cecph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py")
-from generate_subindex import tag_to_subidx
+# sys.path.append("/ceph/chpc/shared/janine_bijsterbosch_group/tyoeasley/brain_representations/src_py")
+# from generate_subindex import tag_to_subidx
 
 
 def summarize_diagram(phom_fname, img_flag=True, do_hom0=True, debug=False, write=False):
